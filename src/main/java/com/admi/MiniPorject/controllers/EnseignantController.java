@@ -6,12 +6,6 @@ import com.admi.MiniPorject.models.enums.Type;
 import com.admi.MiniPorject.models.order.IsValide;
 import com.admi.MiniPorject.models.Person;
 import com.admi.MiniPorject.services.EnseignantService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.JsonbBuilder;
-import jakarta.json.bind.JsonbConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,8 +29,7 @@ public class EnseignantController {
     @GetMapping(path = "{EnseignantId}")
     public Person getEnseignant(@PathVariable("EnseignantId") Long EnseignantId) {
         Person Enseignant = service.getEnseignant(EnseignantId);
-        Enseignant = fixJson(Enseignant);
-        return Enseignant;
+        return fixJson(Enseignant);
     }
 
     // cett method nous permet de resoudre le problem de la recursion des donne 
@@ -53,14 +46,6 @@ public class EnseignantController {
             materialOrder.getMaterial().setOrders(null);
         }
         return e;
-    }
-
-    private List<FournitureOrder> filterFournitureOrder(List<FournitureOrder> fournitureOrders) {
-        return fournitureOrders.stream().filter(FournitureOrder::getIsAccepted).collect(Collectors.toList());
-    }
-
-    private List<MaterialOrder> filterMaterialOrder(List<MaterialOrder> materialOrders) {
-        return materialOrders.stream().filter(MaterialOrder::getIsAccepted).collect(Collectors.toList());
     }
 
     @GetMapping
@@ -99,13 +84,8 @@ public class EnseignantController {
         String password = EnseignantInfo.get("password");
         Person p = service.getEnseignantByEmail(email);
         System.out.println(p.toString());
-        if (p == null)
-            return null;
-
-        fixJson(p);
-        if (p.getCin().equals(password))
-            return p;
-
+        if (fixJson(p).getCin().equals(password))
+            return fixJson(p);
         return null;
     }
 
@@ -115,7 +95,7 @@ public class EnseignantController {
         removingTest.setMsg("the Enseignant is deleted successfully");
         removingTest.setValideOperation(true);
         service.deleteEnseignant(id);
-
+        System.out.println("say hi to papa");
         return removingTest;
     }
 
